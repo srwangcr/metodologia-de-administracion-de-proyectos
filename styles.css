@@ -1,0 +1,114 @@
+:root{
+  --bg: #071028;
+  --panel: #0b2a4a;
+  --text: #f6fbff;
+  --accent: #ffcc00;
+  --danger: #ff6b6b;
+  --radius: 12px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background:var(--bg);
+  color:var(--text);
+  font-size:20px;
+  line-height:1.4;
+  -webkit-font-smoothing:antialiased;
+  padding:18px;
+}
+.site-header{max-width:980px;margin:0 auto 18px}
+.site-header h1{font-size:1.8rem;margin:0 0 6px}
+.lead{opacity:0.95;margin:0 0 12px}
+
+.main-menu{display:flex;gap:12px;max-width:980px;margin:0 auto 18px}
+.menu-btn{flex:1;background:var(--panel);color:var(--text);border:2px solid rgba(255,255,255,0.06);padding:14px 18px;font-size:1.05rem;border-radius:10px;cursor:pointer}
+.menu-btn:focus{outline:3px solid var(--accent)}
+
+.app-main{max-width:980px;margin:0 auto}
+.view{background:rgba(255,255,255,0.02);padding:16px;border-radius:12px}
+.hidden{display:none}
+
+.inbox{display:flex;flex-direction:column;gap:12px}
+.email-card{background:#071a2e;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px}
+.email-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.sender{font-weight:700}
+.email-address{
+  display:block;
+  font-size:0.9rem;
+  color:var(--accent);
+  margin-top:4px;
+}
+.subject{font-size:1.05rem;font-weight:500;margin-top:4px}
+.snippet{opacity:0.9}
+.email-actions{display:flex;gap:10px}
+.link-btn{background:transparent;border:2px solid var(--accent);color:var(--accent);padding:10px 12px;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap}
+.link-btn:hover{background:rgba(255,204,0,0.1)}
+.link-btn:focus{outline:3px solid var(--accent)}
+
+.phone{max-width:550px;margin-top:12px}
+.sms-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.sms-item{background:#072338;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.sms-meta{font-weight:700;margin-bottom:6px}
+.sms-text{margin-bottom:12px;font-style:italic}
+.sms-actions{display:flex;gap:12px}
+.btn{background:var(--accent);color:#071028;border:none;padding:12px 14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.95rem}
+.btn.secondary{background:transparent;color:var(--text);border:2px solid rgba(255,255,255,0.3)}
+.btn:focus{outline:3px solid var(--accent)}
+
+.alert-title{
+  color:var(--danger);
+  font-weight:bold;
+  font-size:1.15rem;
+  margin-top:14px;
+}
+code{
+  background:rgba(255,255,255,0.1);
+  padding:2px 6px;
+  border-radius:4px;
+  color:#ff9f43;
+  font-family:monospace;
+}
+
+/* =============================================
+   MODAL — CORRECCIÓN PRINCIPAL
+   Se usa .modal-overlay oculto por defecto.
+   JS agrega la clase .open para mostrarlo.
+   Esto evita el conflicto entre display:flex
+   y display:none que causaba los bugs.
+   ============================================= */
+.modal-overlay{
+  display:none;          /* oculto por defecto */
+  position:fixed;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,0.75);
+  z-index:9999;
+}
+.modal-overlay.open{
+  display:flex;          /* visible solo cuando JS agrega .open */
+}
+.modal-content{
+  background:var(--panel);
+  padding:22px;
+  border-radius:12px;
+  max-width:720px;
+  width:100%;
+  box-shadow:0 8px 24px rgba(0,0,0,0.6);
+  max-height:90vh;
+  overflow-y:auto;
+  z-index:10000;
+}
+.modal-actions{display:flex;justify-content:flex-end;margin-top:18px}
+.primary{background:var(--accent);color:#071028;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700;font-size:1rem}
+.primary:hover{opacity:0.85}
+
+@media (max-width:600px){
+  body{font-size:18px;padding:12px}
+  .main-menu{flex-direction:column}
+  .sms-actions{flex-direction:column}
+  .email-header{flex-direction:column;align-items:flex-start}
+}

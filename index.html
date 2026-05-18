@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inclusión y Prevención de Fraude - MVP</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Simulador: Prevención de Fraude para Adultos Mayores</h1>
+    <p class="lead">Aprende a reconocer estafas comunes: correos phishing y mensajes/SINPE.</p>
+  </header>
+
+  <nav class="main-menu" aria-label="Menú principal">
+    <button class="menu-btn" data-target="home">Inicio / Volver</button>
+    <button class="menu-btn" data-target="phishing">Simulador de Correos Falsos (Phishing)</button>
+    <button class="menu-btn" data-target="sinpe">Simulador de Mensajes / SINPE Móvil</button>
+  </nav>
+
+  <main id="app" class="app-main">
+    <section id="home" class="view">
+      <h2>Bienvenido</h2>
+      <p>Seleccione una simulación en el menú de arriba para comenzar. Este diseño está pensado especialmente para una lectura fácil, clara y accesible.</p>
+    </section>
+
+    <section id="phishing" class="view hidden" aria-hidden="true">
+      <h2>Bandeja simulada - Correos Recibidos</h2>
+      <div class="inbox" id="inbox"></div>
+    </section>
+
+    <section id="sinpe" class="view hidden" aria-hidden="true">
+      <h2>Simulador de Mensajes de Texto / SINPE</h2>
+      <div class="phone" role="region" aria-label="Pantalla de teléfono simulada">
+        <ul id="smsList" class="sms-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- CAMBIO CLAVE: el overlay es el backdrop, modal-content es el cuadro interno -->
+  <div id="eduOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <h3 id="modalTitle">Alerta: Análisis de Seguridad</h3>
+      <div id="modalBody"></div>
+      <div class="modal-actions">
+        <button id="modalClose" type="button" class="primary" aria-label="Cerrar diálogo">Entendido / Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
