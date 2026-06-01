@@ -30,6 +30,55 @@ body{
 .view{background:rgba(255,255,255,0.02);padding:16px;border-radius:12px}
 .hidden{display:none}
 
+.auth-panel{
+  margin-top:18px;
+  padding:18px;
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.08);
+}
+.auth-copy h3{margin:0 0 8px}
+.auth-status{margin:10px 0 0;font-weight:700}
+.auth-status[data-kind="success"]{color:#7dffaf}
+.auth-status[data-kind="error"]{color:var(--danger)}
+.auth-status[data-kind="neutral"],.auth-status[data-kind="info"]{color:var(--accent)}
+.auth-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:16px;
+}
+.auth-card{
+  background:#071a2e;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.auth-card h4{margin:0}
+.auth-card label{display:flex;flex-direction:column;gap:6px;font-size:0.95rem}
+.auth-card input{
+  width:100%;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:#061220;
+  color:var(--text);
+  padding:12px 14px;
+  font-size:1rem;
+}
+.auth-card input:focus{outline:3px solid var(--accent)}
+.auth-button{align-self:flex-start}
+.session-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.profile-card{
+  margin-top:14px;
+  padding:16px;
+  border-radius:12px;
+  background:#071a2e;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
 .inbox{display:flex;flex-direction:column;gap:12px}
 .email-card{background:#071a2e;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px}
 .email-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -109,6 +158,17 @@ code{
 @media (max-width:600px){
   body{font-size:18px;padding:12px}
   .main-menu{flex-direction:column}
+  .auth-grid{grid-template-columns:1fr}
   .sms-actions{flex-direction:column}
   .email-header{flex-direction:column;align-items:flex-start}
+  .session-actions{flex-direction:column}
 }
+
+/* Admin panel */
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.admin-card{background:#071a2e;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+.user-row,.interaction-row{padding:8px;border-radius:8px;border-bottom:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
+.user-row div{margin-bottom:6px}
+.user-row select{padding:6px;border-radius:6px}
+
+@media (max-width:800px){.admin-grid{grid-template-columns:1fr}}

@@ -1,0 +1,23 @@
+{
+  "name": "adultos-mayores-prevencion-fraude",
+  "version": "1.0.0",
+  "description": "Backend de practica con login, MySQL y pruebas para el simulador de prevencion de fraude.",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "test:integration": "node --test tests/mysql.integration.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.5"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}

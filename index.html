@@ -16,17 +16,95 @@
     <button class="menu-btn" data-target="home">Inicio / Volver</button>
     <button class="menu-btn" data-target="phishing">Simulador de Correos Falsos (Phishing)</button>
     <button class="menu-btn" data-target="sinpe">Simulador de Mensajes / SINPE Móvil</button>
+    <button class="menu-btn" data-target="profile">Mi Perfil</button>
+    <button class="menu-btn" data-target="admin">Panel Admin</button>
   </nav>
 
   <main id="app" class="app-main">
     <section id="home" class="view">
       <h2>Bienvenido</h2>
       <p>Seleccione una simulación en el menú de arriba para comenzar. Este diseño está pensado especialmente para una lectura fácil, clara y accesible.</p>
+
+      <section class="auth-panel" aria-labelledby="authTitle">
+        <div class="auth-copy">
+          <h3 id="authTitle">Acceso a la práctica</h3>
+          <p>Inicie sesión o cree una cuenta para guardar su progreso y practicar con el backend real.</p>
+          <p id="authStatus" class="auth-status" role="status" aria-live="polite">Sesión no iniciada.</p>
+        </div>
+
+        <div class="auth-grid">
+          <form id="loginForm" class="auth-card">
+            <h4>Iniciar sesión</h4>
+            <label>
+              Correo electrónico
+              <input id="loginEmail" name="email" type="email" autocomplete="email" required />
+            </label>
+            <label>
+              Contraseña
+              <input id="loginPassword" name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <button type="submit" class="primary auth-button">Entrar</button>
+          </form>
+
+          <form id="registerForm" class="auth-card">
+            <h4>Crear cuenta</h4>
+            <label>
+              Nombre completo
+              <input id="registerName" name="fullName" type="text" autocomplete="name" required />
+            </label>
+            <label>
+              Correo electrónico
+              <input id="registerEmail" name="email" type="email" autocomplete="email" required />
+            </label>
+            <label>
+              Contraseña
+              <input id="registerPassword" name="password" type="password" autocomplete="new-password" required />
+            </label>
+            <button type="submit" class="btn auth-button">Registrar</button>
+          </form>
+        </div>
+      </section>
+
+      <div class="session-actions">
+        <button id="loadProfileBtn" type="button" class="btn secondary">Ver mi perfil</button>
+        <button id="logoutBtn" type="button" class="btn secondary">Cerrar sesión</button>
+      </div>
+
+      <section id="profileCard" class="profile-card hidden" aria-live="polite"></section>
     </section>
 
     <section id="phishing" class="view hidden" aria-hidden="true">
       <h2>Bandeja simulada - Correos Recibidos</h2>
       <div class="inbox" id="inbox"></div>
+    </section>
+
+    <section id="profile" class="view hidden" aria-hidden="true">
+      <h2>Mi Perfil</h2>
+      <form id="profileForm" class="auth-card">
+        <label>Nombre completo
+          <input id="profileName" name="fullName" type="text" />
+        </label>
+        <label>Nueva contraseña (dejar vacío para no cambiar)
+          <input id="profilePassword" name="password" type="password" />
+        </label>
+        <button type="submit" class="primary auth-button">Guardar cambios</button>
+      </form>
+    </section>
+
+    <section id="admin" class="view hidden" aria-hidden="true">
+      <h2>Panel Administrativo</h2>
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>Usuarios</h3>
+          <button id="refreshUsers" class="btn secondary">Refrescar</button>
+          <div id="usersList" style="margin-top:12px"></div>
+        </div>
+        <div class="admin-card">
+          <h3>Interacciones</h3>
+          <button id="refreshInteractions" class="btn secondary">Refrescar</button>
+          <div id="interactionsList" style="margin-top:12px;max-height:400px;overflow:auto"></div>
+        </div>
+      </div>
     </section>
 
     <section id="sinpe" class="view hidden" aria-hidden="true">

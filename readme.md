@@ -20,8 +20,32 @@ El prototipo actual está construido utilizando tecnologías web nativas (**Vani
 ## 🛠️ Stack Tecnológico
 
 * **Frontend:** HTML5 Semántico, CSS3 Personalizado (Custom Variables) y JavaScript Vanilla (ES6+).
-* **Infraestructura de Producción:** Servidor local privado (On-Premises Homelab).
-* **Gobernanza y Red:** Exposición segura mediante túneles cifrados (Cloudflare Tunnels) con terminación TLS/HTTPS obligatoria y mitigación DDoS.
+* **Backend:** Node.js con Express, login con JWT y middleware de autorización.
+* **Base de Datos:** MySQL 8+ con tabla de usuarios para registro e inicio de sesión.
+* **Pruebas:** `node:test`, `supertest` y una integración real contra MySQL cuando se define `MYSQL_TEST_URL`.
+
+---
+
+## 🔐 Backend de Práctica
+
+El backend se creó para practicar un flujo sencillo de acceso y validación:
+
+* `POST /api/auth/register` crea usuarios nuevos con contraseña cifrada.
+* `POST /api/auth/login` verifica credenciales y devuelve un token JWT.
+* `GET /api/auth/me` muestra el perfil del usuario autenticado.
+
+La estructura SQL está en [sql/schema.sql](sql/schema.sql) y el servidor arranca desde [src/server.js](src/server.js).
+
+---
+
+## ▶️ Cómo Ejecutarlo
+
+1. Copie `.env.example` a `.env` y ajuste sus credenciales de MySQL.
+2. Importe [sql/schema.sql](sql/schema.sql) en su servidor MySQL.
+3. Instale dependencias con `npm install`.
+4. Levante el servidor con `npm start`.
+5. Corra las pruebas locales con `npm test`.
+6. Defina `MYSQL_TEST_URL` y ejecute `npm run test:integration` para validar contra una base real.
 
 ---
 
