@@ -66,8 +66,20 @@ async function listUsers(pool, limit = 100) {
 }
 
 async function deleteUser(pool, id) {
-  await pool.execute('DELETE FROM users WHERE id = ?', [id]);
-  return { ok: true };
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+    await connection.execute('DELETE FROM interactions WHERE user_id = ?', [id]);
+    await connection.execute('DELETE FROM users WHERE id = ?', [id]);
+    await connection.commit();
+    return { ok: true };
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 }
 
 module.exports = { findByEmail, findById, createUser, updateUser, listUsers, deleteUser };

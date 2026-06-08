@@ -63,6 +63,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
     `;
   }
 
+  function resetSessionAfterAccountDeletion(message){
+    clearToken();
+    setAuthStatus(message, 'neutral');
+    if(profileForm) profileForm.reset();
+    if(profileCard){
+      profileCard.classList.add('hidden');
+      profileCard.innerHTML = '';
+    }
+    showView('home');
+  }
+
   async function loadCurrentUser(){
     const token = getToken();
     if(!token){
@@ -134,6 +145,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const profileForm = document.getElementById('profileForm');
   const profileName = document.getElementById('profileName');
   const profilePassword = document.getElementById('profilePassword');
+  const deleteAccountBtn = document.getElementById('deleteAccountBtn');
 
   if(profileForm){
     profileForm.addEventListener('submit', async (e)=>{
@@ -150,6 +162,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
         setAuthStatus('Perfil actualizado.', 'success');
         renderProfile(data.user);
         profileForm.reset();
+      } catch (error) {
+        setAuthStatus(error.message, 'error');
+      }
+    });
+  }
+
+  if(deleteAccountBtn){
+    deleteAccountBtn.addEventListener('click', async ()=>{
+      if(!confirm('¿Seguro que quiere eliminar su cuenta? Esta acción borrará su perfil y sus datos asociados.')) return;
+
+      try {
+        await apiRequest('/api/auth/me', { method: 'DELETE' });
+        resetSessionAfterAccountDeletion('Su cuenta fue eliminada correctamente.');
       } catch (error) {
         setAuthStatus(error.message, 'error');
       }

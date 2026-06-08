@@ -15,10 +15,10 @@ function createRepository() {
 
   return {
     async findByEmail(email) {
-      return email === user.email ? user : null;
+      return email === user.email && !user.deleted ? user : null;
     },
     async findById(id) {
-      return id === user.id ? user : null;
+      return id === user.id && !user.deleted ? user : null;
     },
     async createUser() {
       return { id: 2, fullName: 'New User', email: 'new@example.com', role: 'user' };
@@ -29,6 +29,11 @@ function createRepository() {
       if (fields.fullName) user.full_name = fields.fullName;
       if (fields.passwordHash) user.password_hash = fields.passwordHash;
       return user;
+    },
+    async deleteUser(id) {
+      if (id !== user.id) return null;
+      user.deleted = true;
+      return { ok: true };
     }
   };
 }
@@ -92,4 +97,31 @@ test('update profile with authenticated user', async () => {
 
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.user.fullName || res.body.user.full_name, 'María Actualizada');
+});
+
+test('delete profile with authenticated user', async () => {
+  const app = createApp({
+    userRepository: createRepository(),
+    jwtSecret: 'test-secret'
+  });
+
+  const login = await request(app)
+    .post('/api/auth/login')
+    .send({ email: 'maria@example.com', password: 'password123' });
+
+  assert.equal(login.statusCode, 200);
+  const token = login.body.token;
+
+  const deleteResponse = await request(app)
+    .delete('/api/auth/me')
+    .set('Authorization', `Bearer ${token}`);
+
+  assert.equal(deleteResponse.statusCode, 200);
+  assert.deepEqual(deleteResponse.body, { ok: true });
+
+  const meResponse = await request(app)
+    .get('/api/auth/me')
+    .set('Authorization', `Bearer ${token}`);
+
+  assert.equal(meResponse.statusCode, 404);
 });

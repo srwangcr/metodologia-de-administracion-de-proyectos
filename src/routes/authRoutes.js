@@ -62,6 +62,16 @@ function createAuthRoutes(authService, authMiddleware, userRepository) {
     }
   });
 
+  router.delete('/me', authMiddleware, async (req, res) => {
+    try {
+      const userId = Number(req.auth.sub);
+      await userRepository.deleteUser(userId);
+      return res.status(200).json({ ok: true });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  });
+
   return router;
 }
 
