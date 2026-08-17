@@ -10,6 +10,12 @@
   <header class="site-header">
     <h1>Simulador: Prevención de Fraude para Adultos Mayores</h1>
     <p class="lead">Aprende a reconocer estafas comunes: correos phishing y mensajes/SINPE.</p>
+    <div class="accessibility-controls" aria-label="Controles de accesibilidad">
+      <button id="decreaseFont" aria-label="Disminuir tamaño de letra">A-</button>
+      <button id="increaseFont" aria-label="Aumentar tamaño de letra">A+</button>
+      <button id="toggleContrast" aria-pressed="false">Contraste</button>
+      <button id="toggleTTS" aria-pressed="false">Leer</button>
+    </div>
   </header>
 
   <nav class="main-menu" aria-label="Menú principal">
@@ -96,6 +102,7 @@
 
     <section id="admin" class="view hidden" aria-hidden="true">
       <h2>Panel Administrativo</h2>
+      <div id="metricsSummary" style="margin-bottom:12px;font-weight:700">Cargando métricas...</div>
       <div class="admin-grid">
         <div class="admin-card">
           <h3>Usuarios</h3>
