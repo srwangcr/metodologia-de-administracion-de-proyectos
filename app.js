@@ -228,19 +228,35 @@ document.addEventListener('DOMContentLoaded', ()=>{
   async function loadUsers(){
     try {
       const data = await apiRequest('/api/admin/users');
-      usersList.innerHTML = data.users.map(u => `
-        <div class="user-row" data-id="${u.id}">
-          <div><strong>${u.full_name || u.fullName}</strong> — ${u.email}</div>
-          <div>Rol: <select data-role>${u.role}</select> <button data-save class="btn">Guardar</button> <button data-delete class="btn secondary">Borrar</button></div>
-        </div>
-      `).join('');
+      usersList.innerHTML = '';
+      // header metrics small
+      data.users.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'user-card';
+        div.dataset.id = u.id;
+        div.innerHTML = `
+          <div class="meta">
+            <div class="name">${u.full_name || u.fullName || '—'}</div>
+            <div class="email">${u.email}</div>
+          </div>
+          <div class="user-actions">
+            <select data-role>
+              <option value="user">user</option>
+              <option value="admin">admin</option>
+            </select>
+            <button data-save class="btn">Guardar</button>
+            <button data-delete class="btn secondary">Borrar</button>
+          </div>
+        `;
+        usersList.appendChild(div);
+      });
 
       // wire up actions
-      usersList.querySelectorAll('[data-id]').forEach(div=>{
+      usersList.querySelectorAll('.user-card').forEach(div=>{
         const id = div.dataset.id;
         const sel = div.querySelector('select[data-role]');
-        ['user','admin'].forEach(r=>{ const o=document.createElement('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
-        sel.value = div.querySelector('select[data-role]').getAttribute('value') || sel.value;
+        const user = data.users.find(x=>String(x.id) === String(id));
+        if(user) sel.value = user.role || 'user';
         const save = div.querySelector('[data-save]');
         const del = div.querySelector('[data-delete]');
         save.addEventListener('click', async ()=>{
@@ -261,15 +277,47 @@ document.addEventListener('DOMContentLoaded', ()=>{
     try{
       const mEl = document.getElementById('metricsSummary');
       if(!mEl) return;
-      const data = await apiRequest('/api/admin/metrics');
-      mEl.textContent = `Usuarios: ${data.totalUsers} — Interacciones: ${data.totalInteractions}`;
+      // fetch metrics and interactions to compute breakdown
+      const [metrics, interactionsResp] = await Promise.all([
+        apiRequest('/api/admin/metrics').catch(()=>({ totalUsers: 0, totalInteractions: 0 })),
+        apiRequest('/api/admin/interactions').catch(()=>({ interactions: [] }))
+      ]);
+
+      const interactions = interactionsResp.interactions || [];
+      const counts = interactions.reduce((acc,i)=>{ acc[i.type] = (acc[i.type]||0)+1; return acc; }, {});
+
+      mEl.innerHTML = `
+        <div class="metric-row">
+          <div class="metric"><div class="metric-value">${metrics.totalUsers}</div><div class="metric-label">Usuarios</div></div>
+          <div class="metric"><div class="metric-value">${metrics.totalInteractions}</div><div class="metric-label">Interacciones</div></div>
+          <div style="flex:1">
+            <div style="display:flex;gap:8px;align-items:center">
+              ${Object.keys(counts).map(k=>`<span class="pill">${k}: ${counts[k]}</span>`).join(' ')}
+            </div>
+          </div>
+        </div>
+      `;
     } catch(e){ /* ignore */ }
   }
 
   async function loadInteractions(){
     try {
       const data = await apiRequest('/api/admin/interactions');
-      interactionsList.innerHTML = data.interactions.map(i=>`<div class="interaction-row"><div><strong>${i.type}</strong> — ${i.action}</div><pre style="white-space:pre-wrap">${JSON.stringify(i.payload)}</pre><small>${i.created_at}</small></div>`).join('');
+      const list = data.interactions || [];
+      interactionsList.innerHTML = '';
+      list.forEach(i=>{
+        const div = document.createElement('div');
+        div.className = 'interaction-card';
+        const typeClass = i.type === 'sms' ? 'sms' : (i.type === 'email' ? 'email' : 'other');
+        div.innerHTML = `
+          <div class="interaction-meta">
+            <div><span class="interaction-type ${typeClass}">${i.type}</span> <strong style="margin-left:8px">${i.action}</strong></div>
+            <div style="font-size:0.9rem;color:#617071">${i.created_at || ''}</div>
+          </div>
+          <pre style="white-space:pre-wrap;margin:0">${JSON.stringify(i.payload, null, 2)}</pre>
+        `;
+        interactionsList.appendChild(div);
+      });
     } catch (e) { interactionsList.innerHTML = `<div style="color:var(--danger)">${e.message}</div>`; }
   }
 
