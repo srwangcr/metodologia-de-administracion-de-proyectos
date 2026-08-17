@@ -1,10 +1,17 @@
 :root{
-  --bg: #071028;
-  --panel: #0b2a4a;
-  --text: #f6fbff;
-  --accent: #ffcc00;
-  --danger: #ff6b6b;
+  /* Light, high-contrast palette tuned for older adults (WCAG AA+)
+     Background light, strong dark text and blue accent for actions */
+  --bg: #F7F8F6;
+  --panel: #FFFFFF;
+  --text: #0B1A1E;
+  --accent: #005EA6; /* clear blue */
+  --danger: #B00020;
   --radius: 12px;
+  --base-font-size: 24px; /* larger by default for seniors */
+  --line-height: 1.6;
+  --content-max-width: 760px;
+  --button-padding-vertical: 14px;
+  --button-padding-horizontal: 18px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -13,20 +20,23 @@ body{
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   background:var(--bg);
   color:var(--text);
-  font-size:20px;
-  line-height:1.4;
+  font-size:var(--base-font-size);
+  line-height:var(--line-height);
   -webkit-font-smoothing:antialiased;
   padding:18px;
 }
-.site-header{max-width:980px;margin:0 auto 18px}
+.site-header{max-width:var(--content-max-width);margin:0 auto 18px}
 .site-header h1{font-size:1.8rem;margin:0 0 6px}
 .lead{opacity:0.95;margin:0 0 12px}
 
-.main-menu{display:flex;gap:12px;max-width:980px;margin:0 auto 18px}
-.menu-btn{flex:1;background:var(--panel);color:var(--text);border:2px solid rgba(255,255,255,0.06);padding:14px 18px;font-size:1.05rem;border-radius:10px;cursor:pointer}
+.main-menu{display:flex;gap:12px;max-width:var(--content-max-width);margin:0 auto 18px}
+.accessibility-controls{margin-top:10px;display:flex;gap:8px;align-items:center}
+.accessibility-controls button{background:transparent;border:2px solid rgba(0,0,0,0.08);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer}
+.accessibility-controls button:focus{outline:3px solid var(--accent)}
+.menu-btn{flex:1;background:var(--panel);color:var(--text);border:2px solid rgba(0,0,0,0.08);padding:var(--button-padding-vertical) var(--button-padding-horizontal);font-size:1.1rem;border-radius:12px;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,0.04)}
 .menu-btn:focus{outline:3px solid var(--accent)}
 
-.app-main{max-width:980px;margin:0 auto}
+.app-main{max-width:var(--content-max-width);margin:0 auto}
 .view{background:rgba(255,255,255,0.02);padding:16px;border-radius:12px}
 .hidden{display:none}
 
@@ -49,24 +59,24 @@ body{
   margin-top:16px;
 }
 .auth-card{
-  background:#071a2e;
-  border:1px solid rgba(255,255,255,0.06);
+  background:#F1F4F5;
+  border:1px solid #D4D9DB;
   border-radius:12px;
-  padding:16px;
+  padding:18px;
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:14px;
 }
 .auth-card h4{margin:0}
 .auth-card label{display:flex;flex-direction:column;gap:6px;font-size:0.95rem}
 .auth-card input{
   width:100%;
   border-radius:8px;
-  border:1px solid rgba(255,255,255,0.18);
-  background:#061220;
+  border:1px solid #cfd7d9;
+  background:#ffffff;
   color:var(--text);
-  padding:12px 14px;
-  font-size:1rem;
+  padding:14px 16px;
+  font-size:1.05rem;
 }
 .auth-card input:focus{outline:3px solid var(--accent)}
 .auth-button{align-self:flex-start}
@@ -74,14 +84,14 @@ body{
 .session-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
 .profile-card{
   margin-top:14px;
-  padding:16px;
+  padding:18px;
   border-radius:12px;
-  background:#071a2e;
-  border:1px solid rgba(255,255,255,0.08);
+  background:#F1F4F5;
+  border:1px solid #d4d9db;
 }
 
 .inbox{display:flex;flex-direction:column;gap:12px}
-.email-card{background:#071a2e;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px}
+.email-card{background:#F6F8F8;padding:14px;border-radius:10px;border:1px solid #e0e6e7;display:flex;flex-direction:column;gap:8px}
 .email-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .sender{font-weight:700}
 .email-address{
@@ -99,14 +109,14 @@ body{
 
 .phone{max-width:550px;margin-top:12px}
 .sms-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
-.sms-item{background:#072338;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.sms-item{background:#F6F8F8;padding:14px;border-radius:10px;border:1px solid #e0e6e7}
 .sms-meta{font-weight:700;margin-bottom:6px}
 .sms-text{margin-bottom:12px;font-style:italic}
 .sms-actions{display:flex;gap:12px}
-.btn{background:var(--accent);color:#071028;border:none;padding:12px 14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.95rem}
-.btn.secondary{background:transparent;color:var(--text);border:2px solid rgba(255,255,255,0.3)}
+.btn{background:var(--accent);color:#fff;border:none;padding:var(--button-padding-vertical) var(--button-padding-horizontal);border-radius:10px;cursor:pointer;font-weight:700;font-size:1.05rem;box-shadow:0 4px 0 rgba(0,0,0,0.05)}
+.btn.secondary{background:transparent;color:var(--text);border:2px solid rgba(0,0,0,0.12)}
 .btn.danger{background:var(--danger);color:#fff}
-.btn:focus{outline:3px solid var(--accent)}
+.btn:focus{outline:4px solid var(--accent);outline-offset:2px}
 
 .alert-title{
   color:var(--danger);
@@ -138,9 +148,11 @@ code{
   padding:20px;
   background:rgba(0,0,0,0.75);
   z-index:9999;
+  pointer-events:none; /* prevent blocking when hidden */
 }
 .modal-overlay.open{
   display:flex;          /* visible solo cuando JS agrega .open */
+  pointer-events:auto;
 }
 .modal-content{
   background:var(--panel);
@@ -148,11 +160,16 @@ code{
   border-radius:12px;
   max-width:720px;
   width:100%;
-  box-shadow:0 8px 24px rgba(0,0,0,0.6);
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
   max-height:90vh;
   overflow-y:auto;
   z-index:10000;
 }
+.tutorial-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:11000;align-items:center;justify-content:center;padding:20px;pointer-events:none}
+.tutorial-overlay[aria-hidden="false"]{display:flex;pointer-events:auto}
+.tutorial-box{background:var(--panel);color:var(--text);padding:22px;border-radius:12px;max-width:760px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
+.tutorial-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.tutorial-box h2{margin-top:0}
 .modal-actions{display:flex;justify-content:flex-end;margin-top:18px}
 .primary{background:var(--accent);color:#071028;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700;font-size:1rem}
 .primary:hover{opacity:0.85}
@@ -167,9 +184,24 @@ code{
   .session-actions{flex-direction:column}
 }
 
+/* High contrast / simplified mode for older adults */
+.high-contrast{
+  /* Strong high-contrast override if user wants extra contrast */
+  --bg: #FFFFFF;
+  --panel: #FFFFFF;
+  --text: #000000;
+  --accent: #003E73;
+  --danger: #8B0000;
+}
+
+.high-contrast .menu-btn{border-color:rgba(0,0,0,0.12)}
+.high-contrast .auth-card input{background:#fff;color:#000;border-color:#ccc}
+.high-contrast .btn{background:var(--accent);color:#fff}
+.high-contrast .btn.secondary{border-color:#333;color:#000}
+
 /* Admin panel */
 .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.admin-card{background:#071a2e;padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+.admin-card{background:#F1F4F5;padding:16px;border-radius:12px;border:1px solid #e0e6e7}
 .user-row,.interaction-row{padding:8px;border-radius:8px;border-bottom:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
 .user-row div{margin-bottom:6px}
 .user-row select{padding:6px;border-radius:6px}

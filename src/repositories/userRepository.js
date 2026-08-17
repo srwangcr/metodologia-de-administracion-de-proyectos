@@ -1,6 +1,6 @@
 async function findByEmail(pool, email) {
   const [rows] = await pool.execute(
-    'SELECT id, full_name, email, password_hash, role, created_at FROM users WHERE email = ? LIMIT 1',
+    'SELECT id, full_name, email, password_hash, role, preferences, created_at FROM users WHERE email = ? LIMIT 1',
     [email]
   );
 
@@ -9,7 +9,7 @@ async function findByEmail(pool, email) {
 
 async function findById(pool, id) {
   const [rows] = await pool.execute(
-    'SELECT id, full_name, email, role, created_at FROM users WHERE id = ? LIMIT 1',
+    'SELECT id, full_name, email, role, preferences, created_at FROM users WHERE id = ? LIMIT 1',
     [id]
   );
 
@@ -18,8 +18,8 @@ async function findById(pool, id) {
 
 async function createUser(pool, user) {
   const [result] = await pool.execute(
-    'INSERT INTO users (full_name, email, password_hash, role) VALUES (?, ?, ?, ?)',
-    [user.fullName, user.email, user.passwordHash, user.role || 'user']
+    'INSERT INTO users (full_name, email, password_hash, role, preferences) VALUES (?, ?, ?, ?, ?)',
+    [user.fullName, user.email, user.passwordHash, user.role || 'user', user.preferences ? JSON.stringify(user.preferences) : null]
   );
 
   return {
@@ -49,6 +49,11 @@ async function updateUser(pool, id, fields) {
     params.push(fields.role);
   }
 
+  if (fields.preferences) {
+    sets.push('preferences = ?');
+    params.push(JSON.stringify(fields.preferences));
+  }
+
   if (sets.length === 0) return null;
 
   params.push(id);
@@ -56,7 +61,7 @@ async function updateUser(pool, id, fields) {
   const sql = `UPDATE users SET ${sets.join(', ')} WHERE id = ?`;
   await pool.execute(sql, params);
 
-  const [rows] = await pool.execute('SELECT id, full_name, email, role, created_at FROM users WHERE id = ? LIMIT 1', [id]);
+  const [rows] = await pool.execute('SELECT id, full_name, email, role, preferences, created_at FROM users WHERE id = ? LIMIT 1', [id]);
   return rows[0] || null;
 }
 

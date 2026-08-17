@@ -53,6 +53,15 @@ function createAdminRoutes(repository, authMiddleware) {
     } catch (e) { return res.status(500).json({ message: e.message }); }
   });
 
+  // simple metrics endpoint for admin dashboard
+  router.get('/metrics', async (req, res) => {
+    try {
+      const users = await repository.listUsers(1000000);
+      const interactions = await repository.listInteractions(1000000);
+      return res.json({ totalUsers: users.length, totalInteractions: interactions.length });
+    } catch (e) { return res.status(500).json({ message: e.message }); }
+  });
+
   return router;
 }
 
