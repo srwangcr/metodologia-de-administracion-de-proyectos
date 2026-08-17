@@ -7,6 +7,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
   const authStatus = document.getElementById('authStatus');
+
+  // Diagnostics: surface JS errors and unhandled promise rejections to the UI
+  window.addEventListener('error', (ev)=>{
+    const msg = ev && ev.message ? ev.message : String(ev);
+    console.error('Unhandled error:', ev.error || ev.message || ev);
+    if(authStatus) authStatus.textContent = `Error JS: ${msg}`;
+    // do not interrupt user flow, but make it visible
+  });
+  window.addEventListener('unhandledrejection', (ev)=>{
+    const reason = ev && ev.reason ? (ev.reason.message || String(ev.reason)) : String(ev);
+    console.error('Unhandled rejection:', ev.reason || ev);
+    if(authStatus) authStatus.textContent = `Promise rejection: ${reason}`;
+  });
+  console.log('app.js initialized — DOMContentLoaded');
   const profileCard = document.getElementById('profileCard');
   const loadProfileBtn = document.getElementById('loadProfileBtn');
   const logoutBtn = document.getElementById('logoutBtn');
