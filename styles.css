@@ -285,3 +285,30 @@ canvas{max-width:100%;height:auto}
   .tutorial-box h2{font-size:1.15rem}
   .tutorial-actions{flex-direction:column;align-items:stretch}
 }
+
+/* slide-up/slide-down animations for mobile bottom-sheet appearance */
+@media (max-width:600px){
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0 }
+    to { transform: translateY(0); opacity: 1 }
+  }
+  @keyframes slideDown {
+    from { transform: translateY(0); opacity: 1 }
+    to { transform: translateY(100%); opacity: 0 }
+  }
+
+  .modal-overlay.open .modal-content,
+  .tutorial-overlay[aria-hidden="false"] .tutorial-box{
+    animation: slideUp 320ms cubic-bezier(.22,.9,.3,1) both;
+  }
+
+  /* when closing we rely on instant hide; the enter animation is the important bit */
+
+  /* Ensure submenus and sim-actions buttons are full-width/touch friendly on mobile */
+  .sim-actions .btn, .sim-actions .btn.secondary, .modal-actions .primary, .modal-actions button{
+    width:100%;
+    box-sizing:border-box;
+    padding:12px 14px;
+    font-size:1.05rem;
+  }
+}

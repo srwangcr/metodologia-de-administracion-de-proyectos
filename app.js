@@ -120,6 +120,37 @@ document.addEventListener('DOMContentLoaded', ()=>{
     else { o.style.display = 'none'; }
   }
 
+  // -- Tutorial swipe handling for mobile (touch) --
+  const tutorialTouch = { handlers: null, startX: 0 };
+  function attachTutorialSwipe(){
+    const box = document.querySelector('#tutorialOverlay .tutorial-box');
+    if(!box || tutorialTouch.handlers) return;
+    function onTouchStart(e){ tutorialTouch.startX = e.touches[0].clientX; }
+    function onTouchEnd(e){
+      const endX = (e.changedTouches && e.changedTouches[0].clientX) || tutorialTouch.startX;
+      const dx = endX - tutorialTouch.startX;
+      const threshold = 50;
+      if(dx < -threshold){
+        // swipe left -> next
+        if(currentTutorial < tutorialSteps.length - 1){ currentTutorial++; renderTutorialStep(); } else { document.getElementById('tutorialNext').click(); }
+      } else if(dx > threshold){
+        // swipe right -> prev
+        if(currentTutorial > 0){ currentTutorial--; renderTutorialStep(); }
+      }
+    }
+    box.addEventListener('touchstart', onTouchStart, { passive: true });
+    box.addEventListener('touchend', onTouchEnd, { passive: true });
+    tutorialTouch.handlers = { box, onTouchStart, onTouchEnd };
+  }
+
+  function detachTutorialSwipe(){
+    if(!tutorialTouch.handlers) return;
+    const { box, onTouchStart, onTouchEnd } = tutorialTouch.handlers;
+    box.removeEventListener('touchstart', onTouchStart);
+    box.removeEventListener('touchend', onTouchEnd);
+    tutorialTouch.handlers = null;
+  }
+
   let currentTutorial = 0;
   function renderTutorialStep(){
     const t = tutorialSteps[currentTutorial];
