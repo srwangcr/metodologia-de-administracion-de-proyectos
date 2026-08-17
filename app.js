@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const tokenKey = 'adultos_mayores_auth_token';
   const fontSizeKey = 'am_base_font_size';
   const contrastKey = 'am_contrast_enabled';
+  // Chart.js instances (initialized when admin metrics load)
+  let interactionsDonutChart = null;
+  let interactionsSparkChart = null;
 
   function setAuthStatus(message, kind = 'info'){
     if(!authStatus) return;
@@ -286,17 +289,55 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const interactions = interactionsResp.interactions || [];
       const counts = interactions.reduce((acc,i)=>{ acc[i.type] = (acc[i.type]||0)+1; return acc; }, {});
 
-      mEl.innerHTML = `
-        <div class="metric-row">
-          <div class="metric"><div class="metric-value">${metrics.totalUsers}</div><div class="metric-label">Usuarios</div></div>
-          <div class="metric"><div class="metric-value">${metrics.totalInteractions}</div><div class="metric-label">Interacciones</div></div>
-          <div style="flex:1">
-            <div style="display:flex;gap:8px;align-items:center">
-              ${Object.keys(counts).map(k=>`<span class="pill">${k}: ${counts[k]}</span>`).join(' ')}
-            </div>
-          </div>
-        </div>
-      `;
+      // update text area and charts
+      const metricsText = document.getElementById('metricsText');
+      if(metricsText) metricsText.textContent = `Usuarios: ${metrics.totalUsers} — Interacciones: ${metrics.totalInteractions}`;
+
+      // prepare data for donut
+      const labels = Object.keys(counts);
+      const dataVals = labels.map(l=>counts[l]);
+
+      try{
+        // destroy existing charts if any
+        if(window.Chart){
+          const donutCtx = document.getElementById('interactionsChart');
+          const sparkCtx = document.getElementById('interactionsSpark');
+          if(interactionsDonutChart){ interactionsDonutChart.destroy(); interactionsDonutChart = null; }
+          if(interactionsSparkChart){ interactionsSparkChart.destroy(); interactionsSparkChart = null; }
+
+          if(donutCtx){
+            interactionsDonutChart = new Chart(donutCtx.getContext('2d'), {
+              type: 'doughnut',
+              data: { labels, datasets:[{ data: dataVals, backgroundColor: ['#005EA6','#B45F00','#3B8A3B','#7A2F8F'] }] },
+              options: { plugins:{legend:{position:'bottom'}}, responsive:true, maintainAspectRatio:false }
+            });
+          }
+
+          // sparkline: use recent 7 days counts
+          const last7 = Array.from({length:7}).map((_,i)=>{
+            const d = new Date(); d.setDate(d.getDate() - (6 - i));
+            return d;
+          });
+          const byDay = last7.map(dt=>0);
+          interactions.forEach(it=>{
+            try{
+              const d = it.created_at ? new Date(it.created_at) : null;
+              if(d){
+                const daysAgo = Math.round((new Date() - d)/(1000*60*60*24));
+                if(daysAgo >=0 && daysAgo < 7){ byDay[6 - daysAgo]++; }
+              }
+            }catch(e){}
+          });
+
+          if(sparkCtx){
+            interactionsSparkChart = new Chart(sparkCtx.getContext('2d'), {
+              type: 'line',
+              data: { labels: last7.map(d=>d.toLocaleDateString()), datasets:[{ data: byDay, borderColor:'#005EA6', backgroundColor:'rgba(0,94,166,0.08)', fill:true, tension:0.4, pointRadius:3 }] },
+              options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}}, elements:{point:{radius:0}}, responsive:true, maintainAspectRatio:false }
+            });
+          }
+        }
+      }catch(e){ console.warn('Chart render failed', e); }
     } catch(e){ /* ignore */ }
   }
 

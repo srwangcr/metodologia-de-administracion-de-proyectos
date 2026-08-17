@@ -115,7 +115,15 @@
 
     <section id="admin" class="view hidden" aria-hidden="true">
       <h2>Panel Administrativo</h2>
-      <div id="metricsSummary" style="margin-bottom:12px;font-weight:700">Cargando métricas...</div>
+      <div id="metricsSummary" style="margin-bottom:12px;font-weight:700">
+        <div style="display:flex;gap:12px;align-items:center">
+          <canvas id="interactionsChart" width="180" height="100" aria-label="Distribución de interacciones" role="img"></canvas>
+          <div style="flex:1">
+            <div id="metricsText">Cargando métricas...</div>
+            <canvas id="interactionsSpark" width="300" height="48" aria-label="Evolución de interacciones" role="img" style="margin-top:8px"></canvas>
+          </div>
+        </div>
+      </div>
       <div class="admin-grid">
         <div class="admin-card">
           <h3>Usuarios</h3>
@@ -149,6 +157,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
