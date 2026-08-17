@@ -225,11 +225,11 @@ code{
 
 /* Prevent Chart.js canvases from overflowing layout */
 #metricsSummary canvas{display:block;max-width:100%;height:auto}
-#interactionsChart{width:180px !important;height:100px !important;max-width:180px}
-#interactionsSpark{width:300px !important;height:48px !important;max-width:100%}
+#interactionsChart{width:260px !important;height:160px !important;max-width:260px}
+#interactionsSpark{width:340px !important;height:56px !important;max-width:100%}
 
-/* Ensure admin content scrolls if viewport is small */
-.admin-card{overflow:auto}
+/* Ensure admin content scrolls if viewport is small and allow larger overflow area */
+.admin-card{overflow:auto;max-height:640px;padding:12px}
 .user-row,.interaction-row{padding:8px;border-radius:8px;border-bottom:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
 .user-row div{margin-bottom:6px}
 .user-row select{padding:6px;border-radius:6px}
