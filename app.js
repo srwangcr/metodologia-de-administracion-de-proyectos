@@ -200,6 +200,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
     } catch (e) { usersList.innerHTML = `<div style="color:var(--danger)">${e.message}</div>`; }
   }
 
+  async function loadMetrics(){
+    try{
+      const mEl = document.getElementById('metricsSummary');
+      if(!mEl) return;
+      const data = await apiRequest('/api/admin/metrics');
+      mEl.textContent = `Usuarios: ${data.totalUsers} — Interacciones: ${data.totalInteractions}`;
+    } catch(e){ /* ignore */ }
+  }
+
   async function loadInteractions(){
     try {
       const data = await apiRequest('/api/admin/interactions');
@@ -209,6 +218,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   if(refreshUsersBtn) refreshUsersBtn.addEventListener('click', loadUsers);
   if(refreshInteractionsBtn) refreshInteractionsBtn.addEventListener('click', loadInteractions);
+  // cargar métricas cuando se refrescan usuarios/interacciones o al abrir admin
+  if(refreshUsersBtn) refreshUsersBtn.addEventListener('click', loadMetrics);
 
 
   const profileForm = document.getElementById('profileForm');
@@ -266,6 +277,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
     if(name === 'phishing') renderInbox();
     if(name === 'sinpe') renderSMS();
+    if(name === 'admin') { loadUsers(); loadInteractions(); loadMetrics(); }
   }
 
   // ---------- PHISHING ----------
