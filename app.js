@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const tokenKey = 'adultos_mayores_auth_token';
   const fontSizeKey = 'am_base_font_size';
   const ttsEnabledKey = 'am_tts_enabled';
+  const contrastKey = 'am_contrast_enabled';
 
   function setAuthStatus(message, kind = 'info'){
     if(!authStatus) return;
@@ -64,6 +65,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const inc = document.getElementById('increaseFont');
     const dec = document.getElementById('decreaseFont');
     const tts = document.getElementById('toggleTTS');
+    const contrastBtn = document.getElementById('toggleContrast');
 
     const saved = getSavedFontSize();
     if(saved) applyFontSize(saved);
@@ -97,6 +99,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
       });
       updateTTSButton();
+    }
+
+    if(contrastBtn){
+      function updateContrast(){
+        const on = localStorage.getItem(contrastKey) === 'true';
+        contrastBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        document.body.classList.toggle('high-contrast', on);
+      }
+      contrastBtn.addEventListener('click', ()=>{
+        const current = localStorage.getItem(contrastKey) === 'true';
+        localStorage.setItem(contrastKey, String(!current));
+        updateContrast();
+        // persist to server if logged in
+        if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20, ttsEnabled, highContrast: !current } ) }).catch(()=>{});
+      });
+      // apply saved value
+      const savedContrast = localStorage.getItem(contrastKey) === 'true';
+      if(savedContrast) document.body.classList.add('high-contrast');
+      updateContrast();
     }
   }
 

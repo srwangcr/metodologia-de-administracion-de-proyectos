@@ -1,11 +1,14 @@
 :root{
+  /* Core palette (default high readability dark theme) */
   --bg: #071028;
   --panel: #0b2a4a;
   --text: #f6fbff;
   --accent: #ffcc00;
   --danger: #ff6b6b;
   --radius: 12px;
-  --base-font-size: 20px;
+  --base-font-size: 22px; /* slightly larger by default for seniors */
+  --button-padding-vertical: 14px;
+  --button-padding-horizontal: 18px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -28,6 +31,7 @@ body{
 .accessibility-controls button{background:transparent;border:2px solid rgba(255,255,255,0.08);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer}
 .accessibility-controls button:focus{outline:3px solid var(--accent)}
 .menu-btn{flex:1;background:var(--panel);color:var(--text);border:2px solid rgba(255,255,255,0.06);padding:14px 18px;font-size:1.05rem;border-radius:10px;cursor:pointer}
+.menu-btn{padding:var(--button-padding-vertical) var(--button-padding-horizontal);font-size:1.1rem}
 .menu-btn:focus{outline:3px solid var(--accent)}
 
 .app-main{max-width:980px;margin:0 auto}
@@ -69,8 +73,8 @@ body{
   border:1px solid rgba(255,255,255,0.18);
   background:#061220;
   color:var(--text);
-  padding:12px 14px;
-  font-size:1rem;
+  padding:14px 16px;
+  font-size:1.05rem;
 }
 .auth-card input:focus{outline:3px solid var(--accent)}
 .auth-button{align-self:flex-start}
@@ -108,6 +112,7 @@ body{
 .sms-text{margin-bottom:12px;font-style:italic}
 .sms-actions{display:flex;gap:12px}
 .btn{background:var(--accent);color:#071028;border:none;padding:12px 14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.95rem}
+.btn{padding:var(--button-padding-vertical) var(--button-padding-horizontal);font-size:1.05rem}
 .btn.secondary{background:transparent;color:var(--text);border:2px solid rgba(255,255,255,0.3)}
 .btn.danger{background:var(--danger);color:#fff}
 .btn:focus{outline:3px solid var(--accent)}
@@ -170,6 +175,20 @@ code{
   .email-header{flex-direction:column;align-items:flex-start}
   .session-actions{flex-direction:column}
 }
+
+/* High contrast / simplified mode for older adults */
+.high-contrast{
+  --bg: #ffffff;
+  --panel: #f5f7f8;
+  --text: #000000;
+  --accent: #0055aa;
+  --danger: #b00020;
+}
+
+.high-contrast .menu-btn{border-color:rgba(0,0,0,0.12)}
+.high-contrast .auth-card input{background:#fff;color:#000;border-color:#ccc}
+.high-contrast .btn{background:var(--accent);color:#fff}
+.high-contrast .btn.secondary{border-color:#333;color:#000}
 
 /* Admin panel */
 .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
