@@ -121,6 +121,53 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   }
 
+  // ---------- Guided Tutorial ----------
+  const tutorialKey = 'am_tutorial_completed';
+  const tutorialSteps = [
+    { title: 'Bienvenido', body: 'Bienvenido al simulador. Este breve tutorial le muestra las áreas principales: simulador de correos, simulador de mensajes, perfil y controles de accesibilidad.' },
+    { title: 'Correos (Phishing)', body: 'En "Simulador de Correos" puede analizar correos sospechosos, ver enlace visible y la URL real, y reportarlos. Use el botón "Analizar Correo".' },
+    { title: 'Mensajes / SINPE', body: 'En "Simulador de Mensajes" encontrará ejemplos de SMS y SINPE. Use "¿Qué significa este mensaje?" para ver orientación.' },
+    { title: 'Perfil', body: 'En "Mi Perfil" puede actualizar su nombre y contraseña. Sus preferencias de accesibilidad (tamaño y contraste) se guardarán en su cuenta si inicia sesión.' },
+    { title: 'Accesibilidad', body: 'Use los botones A- / A+ para cambiar tamaño del texto, "Contraste" para alternar modo alto contraste, y "Leer" (TTS) para que el sistema lea el contenido.' }
+  ];
+
+  function showTutorialOverlay(show){
+    const o = document.getElementById('tutorialOverlay');
+    const content = document.getElementById('tutorialContent');
+    if(!o || !content) return;
+    o.setAttribute('aria-hidden', show ? 'false' : 'true');
+    if(show) { o.style.display = 'flex'; currentTutorial = 0; renderTutorialStep(); document.getElementById('tutorialNext').focus(); }
+    else { o.style.display = 'none'; }
+  }
+
+  let currentTutorial = 0;
+  function renderTutorialStep(){
+    const t = tutorialSteps[currentTutorial];
+    const content = document.getElementById('tutorialContent');
+    if(!content) return;
+    content.innerHTML = `<h3>${t.title}</h3><p>${t.body}</p><p style="opacity:0.85;font-size:0.95rem">Paso ${currentTutorial+1} de ${tutorialSteps.length}</p>`;
+  }
+
+  document.addEventListener('click', (e)=>{
+    if(e.target && e.target.id === 'startTutorial') showTutorialOverlay(true);
+    if(e.target && e.target.id === 'tutorialClose') { showTutorialOverlay(false); }
+    if(e.target && e.target.id === 'tutorialNext'){
+      if(currentTutorial < tutorialSteps.length - 1){ currentTutorial++; renderTutorialStep(); } else {
+        // finish
+        localStorage.setItem(tutorialKey, 'true');
+        if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { tutorialCompleted: true } }) }).catch(()=>{});
+        showTutorialOverlay(false);
+      }
+    }
+    if(e.target && e.target.id === 'tutorialPrev'){ if(currentTutorial > 0) { currentTutorial--; renderTutorialStep(); } }
+  });
+
+  // auto show tutorial on first visit (if not completed)
+  try{
+    const completed = localStorage.getItem(tutorialKey) === 'true';
+    if(!completed) setTimeout(()=>{ showTutorialOverlay(true); }, 1200);
+  } catch(e){}
+
   function clearToken(){
     localStorage.removeItem(tokenKey);
   }

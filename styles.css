@@ -1,12 +1,13 @@
 :root{
-  /* Core palette (default high readability dark theme) */
-  --bg: #071028;
-  --panel: #0b2a4a;
-  --text: #f6fbff;
-  --accent: #ffcc00;
-  --danger: #ff6b6b;
+  /* Light, high-contrast palette tuned for older adults (WCAG AA+)
+     Background light, strong dark text and blue accent for actions */
+  --bg: #F7F8F6;
+  --panel: #FFFFFF;
+  --text: #0B1A1E;
+  --accent: #005EA6; /* clear blue */
+  --danger: #B00020;
   --radius: 12px;
-  --base-font-size: 22px; /* slightly larger by default for seniors */
+  --base-font-size: 22px; /* larger by default */
   --button-padding-vertical: 14px;
   --button-padding-horizontal: 18px;
 }
@@ -162,6 +163,11 @@ code{
   overflow-y:auto;
   z-index:10000;
 }
+.tutorial-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:11000;align-items:center;justify-content:center;padding:20px}
+.tutorial-overlay[aria-hidden="false"]{display:flex}
+.tutorial-box{background:var(--panel);color:var(--text);padding:20px;border-radius:12px;max-width:760px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+.tutorial-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.tutorial-box h2{margin-top:0}
 .modal-actions{display:flex;justify-content:flex-end;margin-top:18px}
 .primary{background:var(--accent);color:#071028;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700;font-size:1rem}
 .primary:hover{opacity:0.85}
@@ -178,11 +184,12 @@ code{
 
 /* High contrast / simplified mode for older adults */
 .high-contrast{
-  --bg: #ffffff;
-  --panel: #f5f7f8;
+  /* Strong high-contrast override if user wants extra contrast */
+  --bg: #FFFFFF;
+  --panel: #FFFFFF;
   --text: #000000;
-  --accent: #0055aa;
-  --danger: #b00020;
+  --accent: #003E73;
+  --danger: #8B0000;
 }
 
 .high-contrast .menu-btn{border-color:rgba(0,0,0,0.12)}

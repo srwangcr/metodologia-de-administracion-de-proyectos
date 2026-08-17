@@ -15,8 +15,22 @@
       <button id="increaseFont" aria-label="Aumentar tamaño de letra">A+</button>
       <button id="toggleContrast" aria-pressed="false">Contraste</button>
       <button id="toggleTTS" aria-pressed="false">Leer</button>
+      <button id="startTutorial" class="btn" aria-label="Iniciar tutorial guiado">Iniciar tutorial</button>
     </div>
   </header>
+
+  <!-- Tutorial guided overlay -->
+  <div id="tutorialOverlay" class="tutorial-overlay" aria-hidden="true">
+    <div class="tutorial-box" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+      <h2 id="tutorialTitle">Tutorial</h2>
+      <div id="tutorialContent"></div>
+      <div class="tutorial-actions">
+        <button id="tutorialPrev" class="btn secondary">Anterior</button>
+        <button id="tutorialNext" class="btn">Siguiente</button>
+        <button id="tutorialClose" class="btn secondary">Cerrar</button>
+      </div>
+    </div>
+  </div>
 
   <nav class="main-menu" aria-label="Menú principal">
     <button class="menu-btn" data-target="home">Inicio / Volver</button>
