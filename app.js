@@ -468,6 +468,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const inbox = document.getElementById('inbox');
     if(!inbox) return;
     inbox.innerHTML = '';
+    function visibleDomain(mail){
+      // prefer explicit displayDomain, then domainOficial, then extract from displayLink
+      if(mail.displayDomain) return mail.displayDomain;
+      if(mail.domainOficial) return mail.domainOficial;
+      try{
+        const url = mail.displayLink || mail.link || '';
+        const u = new URL(url.startsWith('http') ? url : `http://${url}`);
+        return u.hostname.replace('www.','');
+      }catch(e){
+        return mail.displayLink || mail.link || '';
+      }
+    }
     inboxData.forEach((mail, idx)=>{
       const card = document.createElement('article');
       card.className = 'email-card';
@@ -482,7 +494,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
           </div>
         </div>
         <div class="snippet">${mail.snippet}</div>
-        ${mail.displayLink ? `<div style="margin-top:8px;font-size:0.95rem;color:var(--accent)">Enlace visible: ${mail.displayLink}</div>` : ''}
+        ${mail.displayLink ? `<div style="margin-top:8px;font-size:0.95rem;color:var(--accent)">Enlace visible: ${visibleDomain(mail)}</div>` : ''}
         ${mail.attachments && mail.attachments.length ? `<div style="margin-top:6px;font-size:0.9rem;color:rgba(255,255,255,0.8)">Adjuntos: ${mail.attachments.join(', ')}</div>` : ''}
       `;
       inbox.appendChild(card);
@@ -508,12 +520,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const attachmentsHtml = (mail.attachments && mail.attachments.length) ? `<p>Adjuntos: ${mail.attachments.join(', ')}</p>` : '';
     const urgencyTag = mail.urgency ? `<div style="font-weight:700;color:${mail.urgency==='alta' ? 'var(--danger)' : 'var(--accent)'}">Urgencia: ${mail.urgency}</div>` : '';
 
-    const bodyHtml = `
+      const bodyHtml = `
       <h4>${mail.subject}</h4>
       <p>${mail.snippet}</p>
       ${attachmentsHtml}
       ${urgencyTag}
-      ${mail.displayLink ? `<p>Enlace visible: <a href="#" id="simDisplayLink">${mail.displayLink}</a></p>` : ''}
+      ${mail.displayLink ? `<p>Enlace visible: <span id="simDisplayLink" class="pill">${mail.displayDomain || mail.domainOficial || (()=>{try{const u=new URL((mail.displayLink||mail.link));return u.hostname.replace('www.','')}catch(e){return mail.displayLink}})()}</span></p>` : ''}
       ${mail.link ? `<p style="font-size:0.9rem;color:rgba(255,255,255,0.7)">URL real: <code>${mail.link}</code></p>` : ''}
     `;
 
