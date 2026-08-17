@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <div class="sms-text">${sms.text}</div>
         <div class="sms-actions">
           <button class="btn btn-guiar" data-idx="${idx}">¿Qué significa este mensaje?</button>
-          <button class="btn secondary btn-reportar">Reportar y Bloquear</button>
+          <button class="btn secondary btn-reportar" data-idx="${idx}">Reportar y Bloquear</button>
         </div>
       `;
       list.appendChild(li);
