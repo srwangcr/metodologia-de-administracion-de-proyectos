@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             interactionsDonutChart = new Chart(donutCtx.getContext('2d'), {
               type: 'doughnut',
               data: { labels, datasets:[{ data: dataVals, backgroundColor: ['#005EA6','#B45F00','#3B8A3B','#7A2F8F'] }] },
-              options: { plugins:{legend:{position:'bottom'}}, responsive:true, maintainAspectRatio:false }
+              options: { plugins:{legend:{position:'bottom'}}, responsive:true, maintainAspectRatio:true, aspectRatio:1.6 }
             });
           }
 
@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             interactionsSparkChart = new Chart(sparkCtx.getContext('2d'), {
               type: 'line',
               data: { labels: last7.map(d=>d.toLocaleDateString()), datasets:[{ data: byDay, borderColor:'#005EA6', backgroundColor:'rgba(0,94,166,0.08)', fill:true, tension:0.4, pointRadius:3 }] },
-              options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}}, elements:{point:{radius:0}}, responsive:true, maintainAspectRatio:false }
+              options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}}, elements:{point:{radius:0}}, responsive:true, maintainAspectRatio:true, aspectRatio:6 }
             });
           }
         }

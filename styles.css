@@ -222,6 +222,14 @@ code{
 .interaction-type.sms{background:#edf7ff;color:#005ea6;border:1px solid #d9eefb}
 .interaction-type.other{background:#f2f6f4;color:#0b5a4e;border:1px solid #d9eae6}
 .sparkline{height:28px;width:100px}
+
+/* Prevent Chart.js canvases from overflowing layout */
+#metricsSummary canvas{display:block;max-width:100%;height:auto}
+#interactionsChart{width:180px !important;height:100px !important;max-width:180px}
+#interactionsSpark{width:300px !important;height:48px !important;max-width:100%}
+
+/* Ensure admin content scrolls if viewport is small */
+.admin-card{overflow:auto}
 .user-row,.interaction-row{padding:8px;border-radius:8px;border-bottom:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
 .user-row div{margin-bottom:6px}
 .user-row select{padding:6px;border-radius:6px}
