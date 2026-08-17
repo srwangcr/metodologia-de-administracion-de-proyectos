@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const logoutBtn = document.getElementById('logoutBtn');
   const apiBase = '';
   const tokenKey = 'adultos_mayores_auth_token';
+  const fontSizeKey = 'am_base_font_size';
+  const ttsEnabledKey = 'am_tts_enabled';
 
   function setAuthStatus(message, kind = 'info'){
     if(!authStatus) return;
@@ -25,6 +27,73 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   function saveToken(token){
     localStorage.setItem(tokenKey, token);
+  }
+
+  // Accessibility: font size and TTS helpers
+  function applyFontSize(size){
+    document.documentElement.style.setProperty('--base-font-size', size + 'px');
+    localStorage.setItem(fontSizeKey, String(size));
+  }
+
+  function getSavedFontSize(){
+    const v = localStorage.getItem(fontSizeKey);
+    return v ? Number(v) : null;
+  }
+
+  let ttsEnabled = localStorage.getItem(ttsEnabledKey) === 'true';
+  const synth = window.speechSynthesis;
+  let currentUtterance = null;
+
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    stopSpeak();
+    try{
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.lang = 'es-ES';
+      currentUtterance.rate = 1;
+      synth.speak(currentUtterance);
+    } catch(e) { console.warn('TTS error', e); }
+  }
+
+  function stopSpeak(){
+    if(synth && synth.speaking) synth.cancel();
+    currentUtterance = null;
+  }
+
+  function initAccessibilityControls(){
+    const inc = document.getElementById('increaseFont');
+    const dec = document.getElementById('decreaseFont');
+    const tts = document.getElementById('toggleTTS');
+
+    const saved = getSavedFontSize();
+    if(saved) applyFontSize(saved);
+
+    if(inc) inc.addEventListener('click', ()=>{
+      const current = Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20;
+      const next = Math.min(32, Math.round(current) + 2);
+      applyFontSize(next);
+    });
+
+    if(dec) dec.addEventListener('click', ()=>{
+      const current = Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20;
+      const next = Math.max(14, Math.round(current) - 2);
+      applyFontSize(next);
+    });
+
+    if(tts){
+      function updateTTSButton(){ tts.setAttribute('aria-pressed', ttsEnabled ? 'true' : 'false'); tts.textContent = ttsEnabled ? 'Leer (ON)' : 'Leer'; }
+      tts.addEventListener('click', ()=>{
+        ttsEnabled = !ttsEnabled;
+        localStorage.setItem(ttsEnabledKey, String(ttsEnabled));
+        updateTTSButton();
+        if(!ttsEnabled) stopSpeak(); else {
+          // read visible view title and paragraphs
+          const view = document.querySelector('.view:not(.hidden)');
+          if(view){ const text = Array.from(view.querySelectorAll('h2,h3,p')).map(n=>n.innerText).join('\n'); speak(text); }
+        }
+      });
+      updateTTSButton();
+    }
   }
 
   function clearToken(){
@@ -131,6 +200,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
     } catch (e) { usersList.innerHTML = `<div style="color:var(--danger)">${e.message}</div>`; }
   }
 
+  async function loadMetrics(){
+    try{
+      const mEl = document.getElementById('metricsSummary');
+      if(!mEl) return;
+      const data = await apiRequest('/api/admin/metrics');
+      mEl.textContent = `Usuarios: ${data.totalUsers} — Interacciones: ${data.totalInteractions}`;
+    } catch(e){ /* ignore */ }
+  }
+
   async function loadInteractions(){
     try {
       const data = await apiRequest('/api/admin/interactions');
@@ -140,6 +218,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   if(refreshUsersBtn) refreshUsersBtn.addEventListener('click', loadUsers);
   if(refreshInteractionsBtn) refreshInteractionsBtn.addEventListener('click', loadInteractions);
+  // cargar métricas cuando se refrescan usuarios/interacciones o al abrir admin
+  if(refreshUsersBtn) refreshUsersBtn.addEventListener('click', loadMetrics);
 
 
   const profileForm = document.getElementById('profileForm');
@@ -197,6 +277,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
     if(name === 'phishing') renderInbox();
     if(name === 'sinpe') renderSMS();
+    if(name === 'admin') { loadUsers(); loadInteractions(); loadMetrics(); }
   }
 
   // ---------- PHISHING ----------
@@ -398,6 +479,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     if(modalClose) setTimeout(()=>modalClose.focus(), 50);
+    // si TTS está activo, leer el contenido del modal
+    try{
+      if(localStorage.getItem(ttsEnabledKey) === 'true'){
+        const text = modalBody ? modalBody.innerText : '';
+        if(text) speak(text);
+      }
+    } catch(e){}
   }
 
   function closeModal(){
@@ -464,6 +552,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 
   loadCurrentUser();
+
+  // Initialize accessibility controls (font size, TTS)
+  initAccessibilityControls();
 
   if(modalClose){
     modalClose.addEventListener('click', closeModal);
