@@ -148,9 +148,11 @@ code{
   padding:20px;
   background:rgba(0,0,0,0.75);
   z-index:9999;
+  pointer-events:none; /* prevent blocking when hidden */
 }
 .modal-overlay.open{
   display:flex;          /* visible solo cuando JS agrega .open */
+  pointer-events:auto;
 }
 .modal-content{
   background:var(--panel);
@@ -163,8 +165,8 @@ code{
   overflow-y:auto;
   z-index:10000;
 }
-.tutorial-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:11000;align-items:center;justify-content:center;padding:20px}
-.tutorial-overlay[aria-hidden="false"]{display:flex}
+.tutorial-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:11000;align-items:center;justify-content:center;padding:20px;pointer-events:none}
+.tutorial-overlay[aria-hidden="false"]{display:flex;pointer-events:auto}
 .tutorial-box{background:var(--panel);color:var(--text);padding:22px;border-radius:12px;max-width:760px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
 .tutorial-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 .tutorial-box h2{margin-top:0}
