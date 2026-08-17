@@ -72,12 +72,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const current = Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20;
       const next = Math.min(32, Math.round(current) + 2);
       applyFontSize(next);
+      // persist to server if logged in
+      if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: next, ttsEnabled } }) }).catch(()=>{});
     });
 
     if(dec) dec.addEventListener('click', ()=>{
       const current = Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20;
       const next = Math.max(14, Math.round(current) - 2);
       applyFontSize(next);
+      if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: next, ttsEnabled } }) }).catch(()=>{});
     });
 
     if(tts){
@@ -90,6 +93,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
           // read visible view title and paragraphs
           const view = document.querySelector('.view:not(.hidden)');
           if(view){ const text = Array.from(view.querySelectorAll('h2,h3,p')).map(n=>n.innerText).join('\n'); speak(text); }
+          if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20, ttsEnabled } }) }).catch(()=>{});
         }
       });
       updateTTSButton();
@@ -155,6 +159,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const data = await apiRequest('/api/auth/me');
       setAuthStatus(`Sesión activa como ${data.user.fullName}.`, 'success');
       renderProfile(data.user);
+      // apply persisted preferences if present
+      try{
+        if(data.user.preferences){
+          const prefs = data.user.preferences || {};
+          if(prefs.fontSize) applyFontSize(Number(prefs.fontSize));
+          if(typeof prefs.ttsEnabled !== 'undefined'){
+            ttsEnabled = Boolean(prefs.ttsEnabled);
+            localStorage.setItem(ttsEnabledKey, String(ttsEnabled));
+            const tbtn = document.getElementById('toggleTTS'); if(tbtn) tbtn.setAttribute('aria-pressed', ttsEnabled ? 'true' : 'false');
+          }
+        }
+      } catch(e){}
     } catch (error) {
       clearToken();
       setAuthStatus(error.message, 'error');

@@ -34,7 +34,8 @@ function createAuthRoutes(authService, authMiddleware, userRepository) {
         id: user.id,
         fullName: user.full_name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        preferences: user.preferences ? JSON.parse(user.preferences) : null
       }
     });
   });
@@ -43,11 +44,13 @@ function createAuthRoutes(authService, authMiddleware, userRepository) {
     try {
       const userId = Number(req.auth.sub);
       const { fullName, password } = req.body || {};
+      const { preferences } = req.body || {};
       const updates = {};
       const bcrypt = require('bcryptjs');
 
       if (fullName) updates.fullName = String(fullName).trim();
       if (password) updates.passwordHash = await bcrypt.hash(String(password), 10);
+      if (preferences) updates.preferences = preferences;
 
       // userRepository is the wrapper provided by server.js which exposes updateUser(id, fields)
       const updated = await userRepository.updateUser(userId, updates);
