@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const apiBase = '';
   const tokenKey = 'adultos_mayores_auth_token';
   const fontSizeKey = 'am_base_font_size';
-  const ttsEnabledKey = 'am_tts_enabled';
   const contrastKey = 'am_contrast_enabled';
 
   function setAuthStatus(message, kind = 'info'){
@@ -55,30 +54,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     return v ? Number(v) : null;
   }
 
-  let ttsEnabled = localStorage.getItem(ttsEnabledKey) === 'true';
-  const synth = window.speechSynthesis;
-  let currentUtterance = null;
-
-  function speak(text){
-    if(!('speechSynthesis' in window)) return;
-    stopSpeak();
-    try{
-      currentUtterance = new SpeechSynthesisUtterance(text);
-      currentUtterance.lang = 'es-ES';
-      currentUtterance.rate = 1;
-      synth.speak(currentUtterance);
-    } catch(e) { console.warn('TTS error', e); }
-  }
-
-  function stopSpeak(){
-    if(synth && synth.speaking) synth.cancel();
-    currentUtterance = null;
-  }
+  // TTS removed per user request
 
   function initAccessibilityControls(){
     const inc = document.getElementById('increaseFont');
     const dec = document.getElementById('decreaseFont');
-    const tts = document.getElementById('toggleTTS');
     const contrastBtn = document.getElementById('toggleContrast');
 
     const saved = getSavedFontSize();
@@ -89,32 +69,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const next = Math.min(32, Math.round(current) + 2);
       applyFontSize(next);
       // persist to server if logged in
-      if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: next, ttsEnabled } }) }).catch(()=>{});
+      if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: next } }) }).catch(()=>{});
     });
 
     if(dec) dec.addEventListener('click', ()=>{
       const current = Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20;
       const next = Math.max(14, Math.round(current) - 2);
       applyFontSize(next);
-      if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: next, ttsEnabled } }) }).catch(()=>{});
+      if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: next } }) }).catch(()=>{});
     });
-
-    if(tts){
-      function updateTTSButton(){ tts.setAttribute('aria-pressed', ttsEnabled ? 'true' : 'false'); tts.textContent = ttsEnabled ? 'Leer (ON)' : 'Leer'; }
-      tts.addEventListener('click', ()=>{
-        ttsEnabled = !ttsEnabled;
-        localStorage.setItem(ttsEnabledKey, String(ttsEnabled));
-        updateTTSButton();
-        if(!ttsEnabled) stopSpeak(); else {
-          // read visible view title and paragraphs
-          const view = document.querySelector('.view:not(.hidden)');
-          if(view){ const text = Array.from(view.querySelectorAll('h2,h3,p')).map(n=>n.innerText).join('\n'); speak(text); }
-          if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20, ttsEnabled } }) }).catch(()=>{});
-        }
-      });
-      updateTTSButton();
-    }
-
     if(contrastBtn){
       function updateContrast(){
         const on = localStorage.getItem(contrastKey) === 'true';
@@ -126,7 +89,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         localStorage.setItem(contrastKey, String(!current));
         updateContrast();
         // persist to server if logged in
-        if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20, ttsEnabled, highContrast: !current } }) }).catch(()=>{});
+        if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20, highContrast: !current } }) }).catch(()=>{});
       });
       // apply saved value
       const savedContrast = localStorage.getItem(contrastKey) === 'true';
@@ -142,7 +105,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     { title: 'Correos (Phishing)', body: 'En "Simulador de Correos" puede analizar correos sospechosos, ver enlace visible y la URL real, y reportarlos. Use el botón "Analizar Correo".' },
     { title: 'Mensajes / SINPE', body: 'En "Simulador de Mensajes" encontrará ejemplos de SMS y SINPE. Use "¿Qué significa este mensaje?" para ver orientación.' },
     { title: 'Perfil', body: 'En "Mi Perfil" puede actualizar su nombre y contraseña. Sus preferencias de accesibilidad (tamaño y contraste) se guardarán en su cuenta si inicia sesión.' },
-    { title: 'Accesibilidad', body: 'Use los botones A- / A+ para cambiar tamaño del texto, "Contraste" para alternar modo alto contraste, y "Leer" (TTS) para que el sistema lea el contenido.' }
+    { title: 'Accesibilidad', body: 'Use los botones A- / A+ para cambiar tamaño del texto y "Contraste" para alternar modo alto contraste.' }
   ];
 
   function showTutorialOverlay(show){
@@ -246,11 +209,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         if(data.user.preferences){
           const prefs = data.user.preferences || {};
           if(prefs.fontSize) applyFontSize(Number(prefs.fontSize));
-          if(typeof prefs.ttsEnabled !== 'undefined'){
-            ttsEnabled = Boolean(prefs.ttsEnabled);
-            localStorage.setItem(ttsEnabledKey, String(ttsEnabled));
-            const tbtn = document.getElementById('toggleTTS'); if(tbtn) tbtn.setAttribute('aria-pressed', ttsEnabled ? 'true' : 'false');
-          }
+          // TTS preference removed — ignore
         }
       } catch(e){}
     } catch (error) {
@@ -603,13 +562,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     if(modalClose) setTimeout(()=>modalClose.focus(), 50);
-    // si TTS está activo, leer el contenido del modal
-    try{
-      if(localStorage.getItem(ttsEnabledKey) === 'true'){
-        const text = modalBody ? modalBody.innerText : '';
-        if(text) speak(text);
-      }
-    } catch(e){}
+    // modal opened
   }
 
   function closeModal(){
