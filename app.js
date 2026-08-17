@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         localStorage.setItem(contrastKey, String(!current));
         updateContrast();
         // persist to server if logged in
-        if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20, ttsEnabled, highContrast: !current } ) }).catch(()=>{});
+        if(getToken()) apiRequest('/api/auth/me', { method: 'PUT', body: JSON.stringify({ preferences: { fontSize: Number(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size')) || 20, ttsEnabled, highContrast: !current } }) }).catch(()=>{});
       });
       // apply saved value
       const savedContrast = localStorage.getItem(contrastKey) === 'true';
