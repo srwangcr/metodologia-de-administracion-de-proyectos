@@ -235,3 +235,26 @@ code{
 .user-row select{padding:6px;border-radius:6px}
 
 @media (max-width:800px){.admin-grid{grid-template-columns:1fr}}
+
+/* Responsive tweaks for admin visuals */
+@media (max-width:900px){
+  .metric-row{flex-direction:column;align-items:flex-start}
+  .metric{min-width:100%;width:100%}
+  #interactionsChart{width:220px !important;height:140px !important;max-width:100%}
+  #interactionsSpark{width:260px !important;height:48px !important;max-width:100%}
+  .admin-card{max-height:none}
+}
+
+@media (max-width:480px){
+  .main-menu{gap:8px}
+  .metric-row{gap:8px}
+  #interactionsChart{width:160px !important;height:120px !important}
+  #interactionsSpark{width:200px !important;height:40px !important}
+  .user-card{flex-direction:column;align-items:flex-start}
+  .user-actions{width:100%;justify-content:flex-start;gap:6px}
+  .user-actions button, .user-actions select{width:auto;flex:0 0 auto}
+  .interaction-card{font-size:0.95rem}
+}
+
+/* Ensure canvases scale cleanly while preserving pixel density */
+canvas{max-width:100%;height:auto}
